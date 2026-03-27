@@ -1,10 +1,11 @@
-import express from 'express'
-import dotenv from'dotenv'
-dotenv.config()
+import express from "express";
+import dotenv from "dotenv";
+import { sendOTPConsumer } from "./consumer.js";
+dotenv.config();
 
-const app = express()
+sendOTPConsumer();
+const app = express();
 
-
-app.listen( process.env.PORT,()=>{
-    console.log(`Server is running on port ${process.env.PORT}`)
-})
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
+});
