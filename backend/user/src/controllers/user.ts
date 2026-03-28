@@ -2,6 +2,7 @@ import { generateToken } from "../config/generateToken.js";
 import { publishToQueue } from "../config/rabbitmq.js";
 import { redisClient } from "../config/redis.js";
 import TryCatch from "../config/TryCatch.js";
+import type { AuthenticatedRequest } from "../middlewares/isAuth.js";
 import { User } from "../model/User.js";
 
 export const loginUser = TryCatch(async (req, res) => {
@@ -72,5 +73,58 @@ export const verifyUser = TryCatch(async (req, res) => {
     message: "User Verified",
     user,
     token,
+  });
+});
+
+export const myProfile = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = req.user;
+
+  res.json(user);
+});
+
+export const updateName = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const user = await User.findById(req.user?._id);
+
+  if (!user) {
+    return res.status(404).json({
+      message: "Please Login",
+    });
+  }
+
+  user.name = req.body.name;
+
+  await user.save();
+
+  const token = generateToken(user);
+
+  res.status(200).json({
+    message: "User Updated",
+    user,
+    token,
+  });
+});
+export const getAllUsers = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const users = await User.find();
+
+  res.status(200).json({
+    message: "All users retrieved",
+    users,
+  });
+});
+
+export const getUser = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  res.status(200).json({
+    message: "User retrieved",
+    user,
   });
 });

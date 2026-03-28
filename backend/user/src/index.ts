@@ -4,6 +4,7 @@ import { connectDb } from "./config/db.js";
 import { redisClient } from "./config/redis.js";
 import userRoutes from './routes/user.js'
 import { connectRabbitMQ } from "./config/rabbitmq.js";
+import cors from 'cors'
 
 dotenv.config();
 connectDb();
@@ -16,6 +17,7 @@ redisClient
 const app = express();
 app.use(express.json())
 app.use('/api/v1',userRoutes)
+app.use(cors())
 
 const port = process.env.PORT;
 

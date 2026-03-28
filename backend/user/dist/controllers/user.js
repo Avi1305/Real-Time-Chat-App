@@ -57,4 +57,44 @@ export const verifyUser = TryCatch(async (req, res) => {
         token,
     });
 });
+export const myProfile = TryCatch(async (req, res) => {
+    const user = req.user;
+    res.json(user);
+});
+export const updateName = TryCatch(async (req, res) => {
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+        return res.status(404).json({
+            message: "Please Login",
+        });
+    }
+    user.name = req.body.name;
+    await user.save();
+    const token = generateToken(user);
+    res.status(200).json({
+        message: "User Updated",
+        user,
+        token,
+    });
+});
+export const getAllUsers = TryCatch(async (req, res) => {
+    const users = await User.find();
+    res.status(200).json({
+        message: "All users retrieved",
+        users,
+    });
+});
+export const getUser = TryCatch(async (req, res) => {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found",
+        });
+    }
+    res.status(200).json({
+        message: "User retrieved",
+        user,
+    });
+});
 //# sourceMappingURL=user.js.map
