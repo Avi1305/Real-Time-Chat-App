@@ -1,8 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import type { IUser } from "../model/User.js";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+
+interface IUser extends Document {
+  _id: string;
+  name: string;
+  email: string;
+}
 
 export interface AuthenticatedRequest extends Request {
   user?: IUser | null;
@@ -45,5 +48,3 @@ export const isAuth = async (
     });
   }
 };
-
-export default isAuth;
